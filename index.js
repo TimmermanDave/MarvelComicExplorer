@@ -3,29 +3,24 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const path = require('path');
 const app = express();
-
-// app.get('/', (req, res) => res.send('Hello World!'))
-// app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-
-// express()
-//   .use(express.static(path.join(__dirname, 'public')))
-//   .set('views', path.join(__dirname, 'views'))
-//   .set('view engine', 'ejs')
-//   .get('/', (req, res) => res.render('pages/index'))
-//   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
-
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 app.set('port', PORT);
 app.set('env', NODE_ENV);
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 app.use(logger('tiny'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/', require(path.join(__dirname, 'routes')));
-// app.use('/', (req, res) => res.send('Hello World!'))
+//api
+app.use('/api', require(path.join(__dirname, 'routes')));
+app.use('/docs', require(path.join(__dirname, 'routes')));
+//frontend
+app.get('/app', (req, res) => res.render('pages/index'))
 
 app.use((req, res, next) => {
   const err = new Error(`${req.method} ${req.url} Not Found`);
