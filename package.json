@@ -1,28 +1,28 @@
 {
-  "name": "node-js-getting-started",
+  "name": "MarvelComicExplorer",
   "version": "0.3.0",
-  "description": "A sample Node.js app using Express 4",
+  "description": "A great way to browse through the insanely convoluted marvel comic universe!",
   "engines": {
     "node": "12.x"
   },
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node_modules/.bin/nodemon index.js",
     "test": "node test.js"
   },
   "dependencies": {
     "ejs": "^2.5.6",
     "express": "^4.15.2",
     "morgan": "^1.9.1",
-    "nodemon": "^1.19.4"
+    "nodemon": "^1.19.4",
+    "request": "^2.81.0"
   },
   "devDependencies": {
-    "request": "^2.81.0",
     "tape": "^4.7.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
+    "url": "https://github.com/TimmermanDave/MarvelComicExplorer"
   },
   "keywords": [
     "node",
