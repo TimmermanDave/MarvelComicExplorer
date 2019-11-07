@@ -3,24 +3,24 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const path = require('path');
 const app = express();
+var cors = require('cors')
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 app.set('port', PORT);
 app.set('env', NODE_ENV);
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
 
 app.use(logger('tiny'));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// frontend
 app.use(express.static(path.join(__dirname, 'public')))
 
-//api
-app.use('/api', require(path.join(__dirname, 'routes')));
-app.use('/docs', require(path.join(__dirname, 'routes')));
-//frontend
-app.get('/app', (req, res) => res.render('pages/index'))
+// api
+app.use('/api', require(path.join(__dirname, 'api/endpoints.js')));
+app.use('/docs', require(path.join(__dirname, 'api/docs.js')));
 
 app.use((req, res, next) => {
   const err = new Error(`${req.method} ${req.url} Not Found`);
@@ -40,8 +40,6 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(
-    `Express Server started on Port ${app.get(
-      'port'
-    )} | Environment : ${app.get('env')}`
+    `Express Server started on Port ${app.get('port')} | Environment : ${app.get('env')}`
   );
 });

@@ -7,17 +7,30 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "node_modules/.bin/nodemon index.js",
-    "test": "node test.js"
+    "build": "rollup -c",
+    "dev:client": "rollup -c -w",
+    "start:client": "sirv public --single",
+    "start:dev": "sirv public --single --dev",
+    "dev:server": "PORT=3000 node_modules/.bin/nodemon server.js",
+    "test:server": "node test.js"
   },
   "dependencies": {
-    "ejs": "^2.5.6",
+    "cors": "^2.8.5",
     "express": "^4.15.2",
     "morgan": "^1.9.1",
     "nodemon": "^1.19.4",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "sirv-cli": "^0.4.4"
   },
   "devDependencies": {
+    "rollup": "^1.12.0",
+    "rollup-plugin-commonjs": "^10.0.0",
+    "rollup-plugin-livereload": "^1.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-postcss": "^2.0.3",
+    "rollup-plugin-svelte": "^5.0.3",
+    "rollup-plugin-terser": "^5.1.2",
+    "svelte": "^3.0.0",
     "tape": "^4.7.0"
   },
   "repository": {
@@ -27,7 +40,9 @@
   "keywords": [
     "node",
     "heroku",
-    "express"
+    "express",
+    "svelte",
+    "rollup"
   ],
   "license": "MIT"
 }

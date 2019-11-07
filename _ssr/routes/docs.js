@@ -16,12 +16,7 @@ const tokenize = () => {
 }
 
 const endpointify = (req) => {
-  return Object.keys(req.params)
-    .reduce((result, key, i) => {
-      if(!req.params[key]) return result;
-      return `${result}/${req.params[key]}`; // add params
-      // return `${result}${i ? '&' : '?'}${key}=${req.params[key]}`; //add querystring
-    }, `http://gateway.marvel.com/v1/public/`);
+  return 'http://gateway.marvel.com/docs/public';
 }
 
 const responsify = (err, resp, body, res) => {
@@ -35,10 +30,11 @@ const responsify = (err, resp, body, res) => {
   }
 }
 
-const callMarvel = (req, res, next) => {
+const call = (req, res, next) => {
   const tokens = tokenize();
   const endpoint = endpointify(req);
   const options = { uri: endpoint, qs: { ...tokens, ...req.query }};
+  console.log(endpoint)
   try {
     request(options, (err, resp, body) => responsify(err, resp, body, res));
   } catch(err) {
@@ -46,17 +42,6 @@ const callMarvel = (req, res, next) => {
   }
 }
 
-const callDocs = (req, res, next) => {
-  const tokens = tokenize();
-  const options = { uri: 'http://gateway.marvel.com/docs/public', qs: { ...tokens }};
-  try {
-    request(options, (err, resp, body) => responsify(err, resp, body, res));
-  } catch(err) {
-    next(err);
-  }
-}
-
-router.route('/v1/:endpoint?/:uid?/:category?').get(callMarvel);
-router.route('/docs').get(callDocs);
+router.route('/').get(call);
 
 module.exports = router;

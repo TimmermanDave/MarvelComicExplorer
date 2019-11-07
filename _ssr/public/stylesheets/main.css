@@ -1,0 +1,46 @@
+html {
+  background: url(../images/starry_low.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+body {
+  background-color: transparent;
+}
+
+.jumbotron {
+  color: white;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  background-color: transparent;
+  padding-bottom: 80px; }
+  .jumbotron .btn-primary {
+    /* background: #845ac7; */
+    /* border-color: #845ac7;  */
+  }
+  .jumbotron .btn-primary:hover {
+    /* background: #7646c1;  */
+  }
+  .jumbotron p {
+    /* color: #d9ccee; */
+    max-width: 75%;
+    margin: 1em auto 2em; 
+  }
+  .navbar + .jumbotron {
+    margin-top: -20px; 
+  }
+  .jumbotron .lang-logo {
+    display: block;
+    overflow: hidden;
+    width: 400px;
+    margin: auto;
+  }
+    .jumbotron .lang-logo img {
+      max-width: 100%; 
+    }
+
+.container {
+  background-color: transparent;
+}
+
