@@ -1,4 +1,8 @@
-<<<<<<< HEAD
+=======
+# MarvelComicExplorer
+A great way to browse through the insanely convoluted marvel comic universe!
+=======
+
 # SERVER
 
 A barebones Node.js app using [Express 4](http://expressjs.com/).
@@ -114,8 +118,3 @@ Then, from within your project folder:
 npm run build
 surge public
 ```
-
-=======
-# MarvelComicExplorer
-A great way to browse through the insanely convoluted marvel comic universe!
->>>>>>> 1c14f8390e1d62bddd92dff0bc89068552bc027c
