@@ -1,6 +1,12 @@
+<script>
+	export let row;
+</script>
+
 <style>
 	.box {
-		border: 1px solid #aaa;
+		display: flex;
+		flex-direction: column;
+		border: 1px solid #ccc;
 		border-radius: 2px;
 		box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
 		padding: 1em;

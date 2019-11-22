@@ -6,7 +6,6 @@ const callback = (err, resp, body, res) => {
   // Add extra business rules here...
 
   if (!err && resp.statusCode === 200) {
-    console.log(body);
     res.json(JSON.parse(body));
   } else {
     res.json(JSON.parse(err));

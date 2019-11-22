@@ -21,16 +21,16 @@ const utils = {
   axios: (options, callback, res, next) => {
     function getAPI(req,res){
       axios.get('http://datasource.kapsarc.org/api/datasets/1.0/search/?rows=500')
-       .then(function (response) {
-           var api = req.path;
-           var dataset = response.data;
-           client.setex(api, 50, JSON.stringify(dataset));
-           console.log("from API");
-           res.send(response.data);
-       })
-       .catch(function (error) {
-         console.log(error);
-       });
+        .then(function (response) {
+          var api = req.path;
+          var dataset = response.data;
+          client.setex(api, 50, JSON.stringify(dataset));
+          console.log("from API");
+          res.send(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
      }
   }
 }

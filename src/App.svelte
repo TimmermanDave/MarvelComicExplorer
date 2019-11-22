@@ -2,75 +2,74 @@
 	export let name;
 
 	import { onMount } from 'svelte';
-	import Box from './Box.svelte';
-	import SearchResult from './SearchResult.svelte';
+	import Box from './components/Box';
+	import CategorieResult from './components/CategorieResult';
+	import SearchResult from './components/SearchResult';
 
-	let docs;
-	let endpointList = [];
-	let params = {};
+	let categories = [];
+	let selectedCategory = '';
+	let selectedLabel = '';
+	let path = '';
 	let searches = {};
-	let searchList = [];
 
-	const basePath = 'http://localhost:3000/api';
-	const version = 'v1';
-
-	async function getDocs() {
+	async function fetchCategories() {
+		// call api
 		const payload = await fetch(`http://localhost:3000/docs`).then(res => res.json());
-		// docs = JSON.parse(payload);
-		endpointList = payload.apis.reduce((acc, item) => {
-			const endpoint = item.path.replace(`/${version}/public/`, '').split('/')[0];
-			if (endpoint && acc.indexOf(endpoint) < 0) acc.push(endpoint);
+		categories = payload.apis.reduce((acc, item) => {
+			// set path and label
+			const path = item.path.replace(`/v1/public/`, '');
+			const label = path.split('/')[0];
+			// dedupe and add to accumulator
+			if (label && acc.every(_item => _item.label.indexOf(label) < 0)) {
+				acc.push({ ...item, path, label });
+			}
 			return acc;
 		}, []);
 	}
 
-	function parseParams() {
-		return Object.keys(params).map((key) => {
-			return `/${params[key]}`;
-		});
-	}
-
-	function updateSearch(results, level) {
-		searches[level] = results;
-		searchList = Object.keys(searches).map((key) => {
-			return searches[key];
-		});
-	}
-
-	async function doSearch(param, level = 0) {
-		if (params[level] !== param) updateSearch([], level);
-		params[level] = param;
-
-		const uri = `${basePath}/${version}${parseParams().join('')}`;
+	async function doSearch(item) {
+		// call api
+		path = item.path;
+		const uri = `http://localhost:3000/api/v1/${path}`;
 		const payload = await fetch(uri).then(res => res.json());
-		// const parsed = JSON.parse(payload);
-
-		updateSearch(payload.data.results, level);
+		// update search results
+		const parts = path.split('/');
+		if (parts.length === 1) {
+			searches = {};
+			searches[parts.length] = payload.data;
+			selectedCategory = parts[0];
+		} else {
+			searches[parts.length] = payload.data.results[0];
+			selectedLabel = item.label;
+		}
+		debugger
 	}
-
-	onMount(getDocs);
+	
+	onMount(fetchCategories);
 </script>
 	
 <style>
-	button {
-		margin: 4px;
+	:global(h1, h2, h3, h4, h5) {
+        text-transform: capitalize;
+	}
+	:global(i) {
+        font-size: 10px;
 	}
 </style>
 
 <h1>{name}</h1>
-<h2>{parseParams(params).join('')}</h2>
+<h4>/{path}</h4>
 
-{#if docs}
-	<Box>
-		<h2>Endpoints</h2>
-		{#each endpointList as endpoint, i}
-			<button on:click={() => doSearch(endpoint)}>{endpoint}</button>
-		{/each}
-	</Box>
-{/if}
-
-{#each searchList as search, i}
-	<Box>
-		<SearchResult data={search} category={params[i]} level={i} onClick={doSearch} />
-	</Box>
-{/each}
+<Box>
+	<CategorieResult 
+		categories={categories}
+		doSearch={doSearch}
+	/>
+	<SearchResult 
+		searches={searches}
+		categories={categories}
+		category={selectedCategory}
+		label={selectedLabel}
+		doSearch={doSearch}
+	/>
+</Box>

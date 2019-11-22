@@ -9,7 +9,7 @@ import postcss from 'rollup-plugin-postcss';
 const production = !process.env.ROLLUP_WATCH;
 
 export default {
-	input: 'src/main.js',
+	input: 'src/app.js',
 
 	output: {
 		sourcemap: true,
