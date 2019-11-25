@@ -12,7 +12,7 @@ const callback = (err, resp, body, res) => {
   }
 }
 
-router.route('/').get((req, res, next) => {
+router.route('/v1/').get((req, res, next) => {
   const tokens = tokenize();
   const endpoint = 'http://gateway.marvel.com/docs/public';
   const options = { uri: endpoint, qs: { ...tokens, ...req.query }};

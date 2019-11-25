@@ -3,20 +3,30 @@
     export let categories;
     export let label;
 	export let doSearch;
+	export let fetchResource;
 
 	import Box from '../Box';
 	import { ButtonList } from '../Lists';
 
+	const image_size = 'landscape_xlarge';
+
 	function parseResults(_data) {
-		return categories.reduce((acc, cat) => {
+		if(!_data) return [];
+		return categories.reduce((acc, category) => {
 			// grab every result array by category name
-			const item = _data[cat.label];
+			const item = _data[category.resource.label];
 			if (item && item.available) {
-				const title = cat.label;
+				const title = category.resource.label;
 				const list = item.items.map((_item) => {
 					const label = _item.name;
 					const path = _item.resourceURI.replace('http://gateway.marvel.com/v1/public/', '');
-					return { ..._item, label, path };
+					const resource = {
+						label, 
+						path,
+						imageSize: image_size,
+						promisedPayload: fetchResource(path).then((res)=> res.json()),
+					}			
+					return { ..._item, resource };
 				}, []);
 				// add normalized item array to accumulator
 				acc.push({ 
@@ -30,7 +40,7 @@
 		}, []);
 	}
 
-	$: searchResult = data ? parseResults(data) : [];
+	$: searchResult = parseResults(data);
 </script>
 
 <style>
@@ -44,7 +54,7 @@
 	<Box>
 		<h3>{search.title}</h3>
 		<i>{search.returned}/{search.available}</i>
-		<ButtonList data={search.list} onSubmit={doSearch} row />
+		<ButtonList data={search.list} onSubmit={doSearch} row size={image_size} />
 	</Box>
 	{/each}
 </Box>

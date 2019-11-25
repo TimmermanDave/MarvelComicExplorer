@@ -2,6 +2,35 @@
 	export let data;
 	export let onSubmit;
     export let row;
+    export let size;
+
+    import { beforeUpdate } from 'svelte';
+
+    beforeUpdate(() => {
+        if (data) {
+            data.forEach((item) => {
+                if (item.resource && item.resource.promisedPayload) {
+                    item.resource.promisedPayload.then((payload) => {
+                        const _data = payload.data && payload.data.count 
+                            ? payload.data.results[0]
+                            : {};
+                        const imgs = _data.images;
+                        const thumbnail = imgs && imgs.length
+                            ? `${imgs[imgs.length-1].path}/${item.resource.imageSize}.${imgs[imgs.length-1].extension}`
+                            : '';
+                        // delete item.resource.promisedPayload;
+                        item.resource.payload = payload;
+                        item.resource.thumbnail = thumbnail;
+                        debugger
+                        data = JSON.parse(JSON.stringify(data));
+                    });
+                }
+            });
+        };
+    });
+
+    $: updatedData = data;
+
 </script>
 
 <style>
@@ -15,9 +44,40 @@
         flex-direction: row;
     }
     .list-item {
-        margin-left: 4px;
-        margin-right: 4px;
+        margin: 4px;
+        background-image: var(--bg);
+        background-size: cover;
     }
+    button {
+        width: 100%;
+        height: 100%;
+        color: grey;
+    }
+    .ladda-button {
+        background-color: transparent;
+    }
+
+    /* Image api sizes: */
+	.portrait_small { min-width: 50px; height: 75px }
+	.portrait_medium { min-width: 100px; height: 150px }
+	.portrait_xlarge { min-width: 150px; height: 225px }
+	.portrait_fantastic { min-width: 168px; height: 252px }
+	.portrait_uncanny { min-width: 300px; height: 450px }
+	.portrait_incredible { min-width: 216px; height: 324px }
+	.standard_small	{ min-width: 65px; height: 45px }
+	.standard_medium { min-width: 100px; height: 100px }
+	.standard_large	{ min-width: 140px; height: 140px }
+	.standard_xlarge { min-width: 200px; height: 200px }
+	.standard_fantastic	{ min-width: 250px; height: 250px }
+	.standard_amazing { min-width: 180px; height: 180px }
+	.landscape_small { min-width: 120px; height: 90px }
+	.landscape_medium { min-width: 175px; height: 130px }
+	.landscape_large { min-width: 190px; height: 140px }
+	.landscape_xlarge { min-width: 270px; height: 200px }
+	.landscape_amazing { min-width: 250px; height: 156px }
+	.landscape_incredible { min-width: 464px; height: 261px }
+	.detail	{} /* constrained to 500px wide */
+	.full-size {} /* no variant descriptor */
 
     /*
     Ladda styles:
@@ -30,10 +90,14 @@
     */
 </style>
 
-{#if data && data.length} 
+{#if updatedData && updatedData.length} 
 <ul class="list">
-    {#each data as item, i}
-    <li class="list-item" style:row>
+    {#each updatedData as item, i}
+    <li 
+        class="list-item {size || 'standard_large'}" 
+        style:row 
+        style="--bg: url({item.resource.thumbnail});"
+    >
         <button
             on:click={() => onSubmit(item)}
             class="ladda-button" 
@@ -41,7 +105,10 @@
             data-size="s"
             data-spinner-size="10"
         >
-            <span class="ladda-label">{item.label}<br /><i>/{item.path}</i></span>
+            <span class="ladda-label">
+                {item.resource.label}<br />
+                <i>/{item.resource.path}</i>
+            </span>
         </button>
     </li>
     {/each} 

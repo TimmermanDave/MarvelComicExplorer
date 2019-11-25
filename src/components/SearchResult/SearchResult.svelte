@@ -4,6 +4,7 @@
     export let category;
     export let label;
 	export let doSearch;
+	export let fetchResource;
 
 	import Box from '../Box';
 	import SearchResultFirstLevel from './SearchResultFirstLevel.svelte';
@@ -28,5 +29,6 @@
 		label={label}
 		data={resultSecondLevel} 
 		doSearch={doSearch} 
+		fetchResource={fetchResource}
 	/>
 </div>

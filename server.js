@@ -19,8 +19,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // frontend
 app.use(express.static(path.join(__dirname, 'public')))
 // api
-app.use('/api', require(path.join(__dirname, 'api/endpoints.js')));
-app.use('/docs', require(path.join(__dirname, 'api/docs.js')));
+app.use('/api/marvel', require(path.join(__dirname, 'api/endpoints.js')));
+app.use('/api/images', require(path.join(__dirname, 'api/images.js')));
+app.use('/api/docs', require(path.join(__dirname, 'api/docs.js')));
 
 // 404 error
 app.use((req, res, next) => {

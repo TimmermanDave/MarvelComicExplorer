@@ -12,16 +12,19 @@
 	let path = '';
 	let searches = {};
 
+	const basePath = 'http://localhost:3000/api';
+
 	async function fetchCategories() {
 		// call api
-		const payload = await fetch(`http://localhost:3000/docs`).then(res => res.json());
+		const payload = await fetch(`${basePath}/docs/v1`).then(res => res.json());
 		categories = payload.apis.reduce((acc, item) => {
 			// set path and label
 			const path = item.path.replace(`/v1/public/`, '');
 			const label = path.split('/')[0];
 			// dedupe and add to accumulator
-			if (label && acc.every(_item => _item.label.indexOf(label) < 0)) {
-				acc.push({ ...item, path, label });
+			if (label && acc.every(_item => _item.resource.label.indexOf(label) < 0)) {
+				const resource = { path, label };
+				acc.push({ ...item, resource });
 			}
 			return acc;
 		}, []);
@@ -29,8 +32,8 @@
 
 	async function doSearch(item) {
 		// call api
-		path = item.path;
-		const uri = `http://localhost:3000/api/v1/${path}`;
+		path = item.resource.path;
+		const uri = `${basePath}/marvel/v1/${path}`;
 		const payload = await fetch(uri).then(res => res.json());
 		// update search results
 		const parts = path.split('/');
@@ -40,9 +43,13 @@
 			selectedCategory = parts[0];
 		} else {
 			searches[parts.length] = payload.data.results[0];
-			selectedLabel = item.label;
+			selectedLabel = item.resource.label;
 		}
-		debugger
+	}
+
+	async function fetchResource(path) {
+		const uri = `${basePath}/marvel/v1/${path}`;
+		return await fetch(uri);
 	}
 	
 	onMount(fetchCategories);
@@ -71,5 +78,6 @@
 		category={selectedCategory}
 		label={selectedLabel}
 		doSearch={doSearch}
+		fetchResource={fetchResource}
 	/>
 </Box>

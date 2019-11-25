@@ -14,12 +14,13 @@ const callback = (err, resp, body, res) => {
 
 router.route('/v1/:endpoint?/:uid?/:category?').get((req, res, next) => {
   const tokens = tokenize();
-  const endpoint = Object.keys(req.params)
-  .reduce((result, key, i) => {
+  const endpoint = Object.keys(req.params).reduce((result, key, i) => {
     if(!req.params[key]) return result;
-    return `${result}/${req.params[key]}`; // adding params
-    // return `${result}${i ? '&' : '?'}${key}=${req.params[key]}`; //adding querystring
-  }, `http://gateway.marvel.com/v1/public/`);
+    // adding params
+    return `${result}/${req.params[key]}`; 
+    //adding querystring
+    // return `${result}${i ? '&' : '?'}${key}=${req.params[key]}`;
+  }, 'http://gateway.marvel.com/v1/public');
   const options = { uri: endpoint, qs: { ...tokens, ...req.query }};
   call(options, callback, res, next);
 });

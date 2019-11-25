@@ -6,30 +6,38 @@
 	import Box from '../Box';
 	import { ButtonList } from '../Lists';
 
-	const item = { 
+	const result = { 
 		title: '', 
 		list: [],
 		returned: 0, 
 		available: 0,
 	};
 
+	const image_size = 'landscape_xlarge';
+
 	function parseResults(_data) {
-		if (!_data) return item;
-		item.title = category;
-		item.list = _data.results.map((_item) => {
+		if (!_data) return result;
+		result.title = category;
+		result.list = _data.results.map((item) => {
 			const fields = {
 				characters: 'name',
 				creators: 'firstName',
 				default: 'title',
 			};
 			const field = fields[category] || fields.default;
-			const label = _item[field];
-			const path = _item.resourceURI.replace('http://gateway.marvel.com/v1/public/', '');
-			return { ..._item, label, path };
+			const label = item[field];
+			const path = item.resourceURI.replace('http://gateway.marvel.com/v1/public/', '');
+			const resource = { 
+				label, 
+				path,
+				thumbnail:`${item.thumbnail.path}/${image_size}.${item.thumbnail.extension}`,
+			};
+			return { ...item, resource };
 		}, []);
-		item.returned = _data.offset + _data.count; 
-		item.available = _data.total;
-		return item;
+		result.returned = _data.offset + _data.count; 
+		result.available = _data.total;
+				
+		return result;
 	}
 	
 	$: searchResult = parseResults(data);
@@ -43,6 +51,6 @@
 <Box class="search-result__level-1">
 	<h2>{searchResult.title}</h2>
 	<i>{searchResult.returned}/{searchResult.available}</i>
-	<ButtonList data={searchResult.list} onSubmit={doSearch} row />
+	<ButtonList data={searchResult.list} onSubmit={doSearch} row size={image_size} />
 </Box>
 {/if}
