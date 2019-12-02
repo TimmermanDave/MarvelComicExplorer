@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "description": "A great way to browse through the insanely convoluted marvel comic universe!",
   "engines": {
-    "node": "12.x"
+    "node": "13.x"
   },
   "main": "server.js",
   "scripts": {

@@ -1,36 +1,8 @@
 <script>
 	export let data;
 	export let onSubmit;
-    export let row;
-    export let size;
-
-    import { beforeUpdate } from 'svelte';
-
-    beforeUpdate(() => {
-        if (data) {
-            data.forEach((item) => {
-                if (item.resource && item.resource.promisedPayload) {
-                    item.resource.promisedPayload.then((payload) => {
-                        const _data = payload.data && payload.data.count 
-                            ? payload.data.results[0]
-                            : {};
-                        const imgs = _data.images;
-                        const thumbnail = imgs && imgs.length
-                            ? `${imgs[imgs.length-1].path}/${item.resource.imageSize}.${imgs[imgs.length-1].extension}`
-                            : '';
-                        // delete item.resource.promisedPayload;
-                        item.resource.payload = payload;
-                        item.resource.thumbnail = thumbnail;
-                        debugger
-                        data = JSON.parse(JSON.stringify(data));
-                    });
-                }
-            });
-        };
-    });
-
-    $: updatedData = data;
-
+    export let isRow;
+    export let size = 'standard_large';
 </script>
 
 <style>
@@ -40,8 +12,8 @@
         flex-wrap: wrap;
         padding: 0;
     }
-    .row {
-        flex-direction: row;
+    .isRow {
+        /* flex-direction: row; */
     }
     .list-item {
         margin: 4px;
@@ -90,13 +62,13 @@
     */
 </style>
 
-{#if updatedData && updatedData.length} 
+{#if data && data.length}
 <ul class="list">
-    {#each updatedData as item, i}
+    {#each data as item, i}
     <li 
-        class="list-item {size || 'standard_large'}" 
-        style:row 
-        style="--bg: url({item.resource.thumbnail});"
+        class="list-item {size}" 
+        style:isRow 
+        style="--bg: url({item.thumbnail});"
     >
         <button
             on:click={() => onSubmit(item)}
@@ -106,11 +78,11 @@
             data-spinner-size="10"
         >
             <span class="ladda-label">
-                {item.resource.label}<br />
-                <i>/{item.resource.path}</i>
+                {item.label}<br />
+                <i>/{item.path}</i>
             </span>
         </button>
     </li>
-    {/each} 
+    {/each}
 </ul>
 {/if}

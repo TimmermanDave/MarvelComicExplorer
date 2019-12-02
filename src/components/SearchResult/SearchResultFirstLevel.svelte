@@ -1,46 +1,52 @@
-<script>
-    export let data;
-    export let category;
-	export let doSearch;
+<script>	
+	import { firstLevelSearch, currentPath, selectedCategory } from '../../stores';
+	import { doSearch } from './search';
+	import { marvelApiDomain, marvelApiPath, getImagePath } from '../../utils'; 
 
 	import Box from '../Box';
-	import { ButtonList } from '../Lists';
+	import { ButtonList } from '../Lists'; 
 
-	const result = { 
-		title: '', 
-		list: [],
-		returned: 0, 
-		available: 0,
-	};
+	let firstLevelSearchValue;
+	firstLevelSearch.subscribe(value => firstLevelSearchValue = value);
+	let selectedCategoryValue;
+	selectedCategory.subscribe(value => selectedCategoryValue = value);
 
-	const image_size = 'landscape_xlarge';
+	const imageSize = 'landscape_xlarge';
 
 	function parseResults(_data) {
+		const result = {
+			title: '', 
+			list: [],
+			returned: 0, 
+			available: 0,
+		};
+
 		if (!_data) return result;
-		result.title = category;
+
+		result.title = selectedCategoryValue;
 		result.list = _data.results.map((item) => {
 			const fields = {
 				characters: 'name',
 				creators: 'firstName',
 				default: 'title',
 			};
-			const field = fields[category] || fields.default;
+			const field = fields[selectedCategoryValue] || fields.default;
 			const label = item[field];
-			const path = item.resourceURI.replace('http://gateway.marvel.com/v1/public/', '');
-			const resource = { 
+			const path = item.resourceURI.replace(marvelApiDomain + marvelApiPath, '');
+			const resource = {
 				label, 
 				path,
-				thumbnail:`${item.thumbnail.path}/${image_size}.${item.thumbnail.extension}`,
+				thumbnail: getImagePath(item.thumbnail, imageSize),
 			};
-			return { ...item, resource };
+			return { ...item, ...resource };
 		}, []);
-		result.returned = _data.offset + _data.count; 
+		result.returned = _data.offset + _data.count;
 		result.available = _data.total;
-				
+
 		return result;
 	}
-	
-	$: searchResult = parseResults(data);
+
+	$: searchResult = parseResults(firstLevelSearchValue);
 </script>
 
 <style>
@@ -48,9 +54,9 @@
 </style>
 
 {#if searchResult.list.length}
-<Box class="search-result__level-1">
+<Box class="search-result__level--1">
 	<h2>{searchResult.title}</h2>
 	<i>{searchResult.returned}/{searchResult.available}</i>
-	<ButtonList data={searchResult.list} onSubmit={doSearch} row size={image_size} />
+	<ButtonList data={searchResult.list} onSubmit={doSearch} size={imageSize} isRow />
 </Box>
 {/if}
