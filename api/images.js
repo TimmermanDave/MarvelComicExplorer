@@ -35,7 +35,6 @@ landscape_xlarge	270x200px
 landscape_amazing	250x156px
 landscape_incredible	464x261px
 
-
 detail	full image, constrained to 500px wide
 full-size image	no variant descriptor
 */
