@@ -9,7 +9,7 @@ import postcss from 'rollup-plugin-postcss';
 const production = !process.env.ROLLUP_WATCH;
 
 export default {
-	input: 'src/app.js',
+	input: 'src/index.js',
 
 	output: {
 		sourcemap: true,
@@ -27,6 +27,8 @@ export default {
 			css: css => {
 				css.write('public/bundle.css');
 			},
+			// needed for scss setup
+			emitCss: true
 		}),
 
 		// If you have external dependencies installed from
@@ -40,6 +42,19 @@ export default {
 		}),
 		
 		commonjs(),
+
+		postcss({
+			extract: true,
+			minimize: true,
+			use: [
+				['sass', {
+					includePaths: [
+						'./src/theme',
+						'./node_modules'
+					]
+				}]
+			]
+		}),
 
 		// In dev mode, call `npm run start:dev` once
 		// the bundle has been generated

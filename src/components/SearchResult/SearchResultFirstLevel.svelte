@@ -10,9 +10,7 @@
 	const firstLevelSearchUnsub = firstLevelSearch.subscribe(value => firstLevelSearchValue = value);
 	onDestroy(firstLevelSearchUnsub);
 
-	const imageSize = 'landscape_xlarge';
-
-	$: searchResult = parseFirstLevelSearch(firstLevelSearchValue, imageSize);
+	$: searchResult = parseFirstLevelSearch(firstLevelSearchValue);
 </script>
 
 <style>
@@ -23,6 +21,6 @@
 <Box class="search-result__level--1">
 	<h2>{searchResult.title}</h2>
 	<i>{searchResult.returned}/{searchResult.available}</i>
-	<ButtonList data={searchResult.list} onSubmit={doSearch} size={imageSize} isRow />
+	<ButtonList data={searchResult.list} onSubmit={doSearch} />
 </Box>
 {/if}

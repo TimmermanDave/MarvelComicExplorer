@@ -32,11 +32,12 @@ export async function doSearch(item) {
     }   
 }
 
-export function parseFirstLevelSearch(data, imageSize) {
+export function parseFirstLevelSearch(data) {
     let selectedCategoryValue;
     const selectedCategoryUnsub = selectedCategory.subscribe(value => selectedCategoryValue = value);
     onDestroy(selectedCategoryUnsub);
 
+    const imageSize = 'portrait_incredible';
     const result = {
         title: '', 
         list: [],
@@ -55,21 +56,26 @@ export function parseFirstLevelSearch(data, imageSize) {
         };
         const field = fields[selectedCategoryValue] || fields.default;
         const label = item[field];
-        const path = item.resourceURI.replace(marvelApiDomain + marvelApiPath, '');
+        const path = item.resourceURI.replace(marvelApiDomain + marvelApiPath, '');            
+        const thumbnail = getImagePath(item.thumbnail, imageSize);
+        // if (thumbnail.indexOf('image_not_available') !== -1) debugger
+
         const resource = {
             label, 
             path,
-            thumbnail: getImagePath(item.thumbnail, imageSize),
+            imageSize,
+            thumbnail,
         };
         return { ...item, ...resource };
     }, []);
     result.returned = data.offset + data.count;
     result.available = data.total;
+    console.log(result);
 
     return result;
 }
 
-export function parseSecondLevelSearch(data, imageSize) {
+export function parseSecondLevelSearch(data) {
     let categoriesValue;
     const categoriesUnsub = categories.subscribe(value => categoriesValue = value);
     onDestroy(categoriesUnsub);
@@ -78,6 +84,7 @@ export function parseSecondLevelSearch(data, imageSize) {
 	const secondLevelSearchUpdatedUnsub = secondLevelSearchUpdated.subscribe(value => secondLevelSearchUpdatedValue = value);
     onDestroy(secondLevelSearchUpdatedUnsub);
     
+    const imageSize = 'portrait_incredible';
     let searchResult;
 
     const getData = async function(path, i, j) {
@@ -90,11 +97,13 @@ export function parseSecondLevelSearch(data, imageSize) {
             const results = payload.data.results[0];
             const images = results.images || [results.thumbnail];
             if (images[0]) {
-                target.data = payload;
+                target.data = payload.data.results[0];
                 target.thumbnail = getImagePath(images[0], imageSize);
+                if (target.thumbnail.indexOf('image_not_available') !== -1) debugger
                 // overwrite to trigger render loop
                 searchResult = dataClone;
                 secondLevelSearchUpdated.update(value => value = dataClone);
+                console.log(searchResult);
             }
         }
     }
@@ -123,6 +132,7 @@ export function parseSecondLevelSearch(data, imageSize) {
             });
             searchResult = acc;
         }
+
         return acc;
     }, []);
 }

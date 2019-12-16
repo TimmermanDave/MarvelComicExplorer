@@ -19,9 +19,7 @@
 	const secondLevelSearchUpdatedUnsub = secondLevelSearchUpdated.subscribe(value => secondLevelSearchUpdatedValue = value);
 	onDestroy(secondLevelSearchUpdatedUnsub);
 
-	const imageSize = 'landscape_xlarge';
-
-	$: searchResult = parseSecondLevelSearch(secondLevelSearchValue, imageSize);
+	$: searchResult = parseSecondLevelSearch(secondLevelSearchValue);
 </script>
 
 <style>
@@ -35,7 +33,7 @@
 	<Box>
 		<h3>{search.title}</h3>
 		<i>{search.returned}/{search.available}</i>
-		<ButtonList data={search.list} onSubmit={doSearch} isRow={search.title === 'stories'} size={imageSize} />
+		<ButtonList data={search.list} onSubmit={doSearch} />
 	</Box>
 	{/each}
 </Box>
