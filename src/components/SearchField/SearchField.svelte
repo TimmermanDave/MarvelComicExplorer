@@ -9,18 +9,18 @@
 
 	onMount(async () => {
 		const payload = await fetchMarvelCategories();
-		categories.set(
-			payload.apis.reduce((acc, item) => {
-				// set path and label
-				const path = item.path.replace(marvelApiPath, '');
-				const label = path.split('/')[0];
-				// dedupe and add to accumulator
-				if (label && acc.every(_item => _item.label.indexOf(label) < 0)) {
-					acc.push({ ...item, path, label });
-				}
-				return acc;
-			}, [])
-		);
+		// categories.set(
+		// 	payload.apis.reduce((acc, item) => {
+		// 		// set path and label
+		// 		const path = item.path.replace(marvelApiPath, '');
+		// 		const label = path.split('/')[0];
+		// 		// dedupe and add to accumulator
+		// 		if (label && acc.every(_item => _item.label.indexOf(label) < 0)) {
+		// 			acc.push({ ...item, path, label });
+		// 		}
+		// 		return acc;
+		// 	}, []);
+		// );
 	});
 </script>
 	

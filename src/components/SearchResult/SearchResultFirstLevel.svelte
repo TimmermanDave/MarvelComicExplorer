@@ -1,16 +1,12 @@
 <script>	
 	import { onDestroy } from 'svelte';
-	import { firstLevelSearch } from '../../stores';
+	import { firstLevelSearch, selectedCategory } from '../../stores';
 	import { doSearch, parseFirstLevelSearch } from './search';
 
 	import Box from '../Box';
 	import { ButtonList } from '../Lists'; 
 
-	let firstLevelSearchValue;
-	const firstLevelSearchUnsub = firstLevelSearch.subscribe(value => firstLevelSearchValue = value);
-	onDestroy(firstLevelSearchUnsub);
-
-	$: searchResult = parseFirstLevelSearch(firstLevelSearchValue);
+	$: searchResult = parseFirstLevelSearch($firstLevelSearch, $selectedCategory);
 </script>
 
 <style>
@@ -18,7 +14,7 @@
 </style>
 
 {#if searchResult.list.length}
-<Box class="search-result__level--1">
+<Box class="search-result__level-1">
 	<h2>{searchResult.title}</h2>
 	<i>{searchResult.returned}/{searchResult.available}</i>
 	<ButtonList data={searchResult.list} onSubmit={doSearch} />

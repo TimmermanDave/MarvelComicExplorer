@@ -1,30 +1,40 @@
-import { onDestroy } from 'svelte';
-import { firstLevelSearch, secondLevelSearch, secondLevelSearchUpdated, categories, selectedCategory, selectedLabel, currentPath } from '../../stores';
-import { fetchMarvelResource, marvelApiDomain, marvelApiPath, getImagePath } from '../../utils'; 
+import { get as storeGet } from 'svelte/store';
+import { 
+    firstLevelSearch, 
+    secondLevelSearch, 
+    secondLevelEnrichedSearch, 
+    categories, 
+    selectedCategory, 
+    selectedLabel, 
+    currentPath 
+} from '../../stores';
+import { 
+    fetchMarvelResource, 
+    marvelApiDomain, 
+    marvelApiPath, 
+    getImagePath 
+} from '../../utils'; 
 
 export async function doSearch(item) {
-    let currentPathValue;
-    const currentPathUnsub = currentPath.subscribe(value => currentPathValue = value);
-    onDestroy(currentPathUnsub); 
-    
     // call api
     currentPath.update(value => value = item.path);
-    const payload = await fetchMarvelResource(currentPathValue);
+    const payload = await fetchMarvelResource(item.path);
+    const urlParts = item.path.split('/');
     // update search results
-    const parts = currentPathValue.split('/');
-    if (parts.length === 1) {
-        // fill first result table when category is requested
+    if (urlParts.length === 1) {
+        // fill first result table when category is requested and reset the second table
         firstLevelSearch.set({});
         firstLevelSearch.update(value => value = payload.data);
-        selectedCategory.update(value => value = parts[0]);	
+        secondLevelSearch.update(value => value = undefined);
+        selectedCategory.update(value => value = urlParts[0]);	
     } else {
-        if (parts[0] !== selectedCategory) {
+        if (urlParts[0] !== storeGet(selectedCategory)) {
             // re-fill first result table when category is changed while requesting resource
-            const _payload = await fetchMarvelResource(parts[0]);
+            const _payload = await fetchMarvelResource(urlParts[0]);
             firstLevelSearch.update(value => value = _payload.data);
-            selectedCategory.update(value => value = parts[0]);
+            selectedCategory.update(value => value = urlParts[0]);
         }
-        if (parts.length === 2) {
+        if (urlParts.length === 2) {
             // fill second result table when resource is requested
             secondLevelSearch.update(value => value = payload.data.results[0]);
             selectedLabel.update(value => value = item.label);
@@ -32,11 +42,8 @@ export async function doSearch(item) {
     }   
 }
 
-export function parseFirstLevelSearch(data) {
-    let selectedCategoryValue;
-    const selectedCategoryUnsub = selectedCategory.subscribe(value => selectedCategoryValue = value);
-    onDestroy(selectedCategoryUnsub);
-
+export function parseFirstLevelSearch(data, title) {
+    debugger
     const imageSize = 'portrait_incredible';
     const result = {
         title: '', 
@@ -46,15 +53,15 @@ export function parseFirstLevelSearch(data) {
     };
 
     if (!data) return result;
-
-    result.title = selectedCategoryValue;
+    
+    result.title = title;
     result.list = data.results.map((item) => {
         const fields = {
             characters: 'name',
             creators: 'firstName',
             default: 'title',
         };
-        const field = fields[selectedCategoryValue] || fields.default;
+        const field = fields[title] || fields.default;
         const label = item[field];
         const path = item.resourceURI.replace(marvelApiDomain + marvelApiPath, '');            
         const thumbnail = getImagePath(item.thumbnail, imageSize);
@@ -70,48 +77,43 @@ export function parseFirstLevelSearch(data) {
     }, []);
     result.returned = data.offset + data.count;
     result.available = data.total;
-    console.log(result);
 
     return result;
 }
 
 export function parseSecondLevelSearch(data) {
-    let categoriesValue;
-    const categoriesUnsub = categories.subscribe(value => categoriesValue = value);
-    onDestroy(categoriesUnsub);
 
-    let secondLevelSearchUpdatedValue;
-	const secondLevelSearchUpdatedUnsub = secondLevelSearchUpdated.subscribe(value => secondLevelSearchUpdatedValue = value);
-    onDestroy(secondLevelSearchUpdatedUnsub);
-    
+    // if no data available, reset store and return
+    if(!data) {
+        secondLevelEnrichedSearch.update(value => value = []);
+        return;
+    }
+
+    let currentData;
     const imageSize = 'portrait_incredible';
-    let searchResult;
-
-    const getData = async function(path, i, j) {
+    const getDataInParallel = async function(path, i, j) {
 		const payload = await fetchMarvelResource(path);
         // clone list
-		const dataClone = JSON.parse(JSON.stringify(searchResult));
-        // find targeted item and add data if available in payload
+		const dataClone = JSON.parse(JSON.stringify(currentData));
+        // find targeted item and add data (if available) to payload
         const target = dataClone[i] ? dataClone[i].list[j] : false;
         if (target && payload && payload.data && payload.data.count) {
             const results = payload.data.results[0];
-            const images = results.images || [results.thumbnail];
+            const images = results.images || [results.thumbnail]; // must be an array
             if (images[0]) {
                 target.data = payload.data.results[0];
                 target.thumbnail = getImagePath(images[0], imageSize);
-                if (target.thumbnail.indexOf('image_not_available') !== -1) debugger
-                // overwrite to trigger render loop
-                searchResult = dataClone;
-                secondLevelSearchUpdated.update(value => value = dataClone);
-                console.log(searchResult);
+                // if (target.thumbnail.indexOf('image_not_available') !== -1) debugger
+                // overwrite data with enriched data from parallel load
+                currentData = dataClone;
+                // update to trigger render loop for parallel image rendering
+                secondLevelEnrichedSearch.update(value => value = dataClone);
             }
         }
     }
 
-    if(!data) return [];
-
     // grab every result array by category name
-    return categoriesValue.reduce((acc, category) => {
+    return storeGet(categories).reduce((acc, category) => {
         const item = data[category.label];
         if (item && item.available) {
             const title = category.label;
@@ -119,8 +121,9 @@ export function parseSecondLevelSearch(data) {
                 const label = _item.name;
                 const path = _item.resourceURI.replace(marvelApiDomain + marvelApiPath, '');
                 const resource = { label, path, imageSize };
-                getData(path, acc.length, j);
-                // fetch resource in parallel
+                // fetch resource in parallel (as a side-effect)
+                getDataInParallel(path, acc.length, j);
+                // return without waiting for enriched data
                 return { ..._item, ...resource };
             }, []);
             // add normalized array to accumulator
@@ -130,7 +133,7 @@ export function parseSecondLevelSearch(data) {
                 returned: item.returned, 
                 available: item.available,
             });
-            searchResult = acc;
+            currentData = acc;
         }
 
         return acc;

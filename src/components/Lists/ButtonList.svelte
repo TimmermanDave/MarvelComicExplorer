@@ -2,7 +2,7 @@
 	export let data;
 	export let onSubmit;
 
-    import Card, {Content, PrimaryAction, Media, MediaContent, Actions, ActionButtons, ActionIcons} from '@smui/card';
+    import Card, { Content, PrimaryAction, Media, MediaContent, Actions, ActionButtons, ActionIcons } from '@smui/card';
 	import Button, {Label} from '@smui/button';
 	import IconButton, {Icon} from '@smui/icon-button';
 	import List, {Item, Text} from '@smui/list';
