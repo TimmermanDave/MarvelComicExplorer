@@ -43,7 +43,6 @@ export async function doSearch(item) {
 }
 
 export function parseFirstLevelSearch(data, title) {
-    debugger
     const imageSize = 'portrait_incredible';
     const result = {
         title: '', 

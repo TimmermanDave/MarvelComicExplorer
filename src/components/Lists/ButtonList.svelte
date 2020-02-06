@@ -89,15 +89,15 @@
         <div class="{item.imageSize || imageSize}" style="height: auto;">
         <Card>
 			<div style="padding: 1rem;">
-			<h2 class="mdc-typography--headline6" style="margin: 0;">{item.label}</h2>
-			<h3 class="mdc-typography--subtitle2" style="margin: 0; color: #888;"></h3>
+                <h2 class="mdc-typography--headline6" style="margin: 0;">{item.label}</h2>
+                <h3 class="mdc-typography--subtitle2" style="margin: 0; color: #888;"></h3>
 			</div>
 			<PrimaryAction on:click={() => onSubmit(item)}>
 			<div style="background-image: url({item.thumbnail});" class="{item.imageSize || imageSize}" />
             {#if item.data && item.data.description}
-			<Content class="mdc-typography--body2">
-				{@html item.data.description}
-			</Content>
+                <Content class="mdc-typography--body2">
+                    {@html item.data.description}
+                </Content>
             {/if}
 			</PrimaryAction>
 		</Card>

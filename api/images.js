@@ -43,7 +43,6 @@ router.route('/v1/:variant/:extension/').get((req, res, next) => {
   const tokens = tokenize();
   const endpoint = `${req.query.path}`;
   const options = { uri: endpoint, qs: { ...tokens, ...req.query }};
-  console.log(options)
   call(options, callback, res, next);
 });
 
