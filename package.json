@@ -27,6 +27,7 @@
     "@material/typography": "^3.1.0",
     "@smui/button": "^1.0.0-beta.20",
     "@smui/card": "^1.0.0-beta.20",
+    "@smui/drawer": "^1.0.0-beta.20",
     "@smui/icon-button": "^1.0.0-beta.20",
     "@smui/list": "^1.0.0-beta.20",
     "@smui/menu": "^1.0.0-beta.20",

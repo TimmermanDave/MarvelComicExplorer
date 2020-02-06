@@ -64,6 +64,24 @@
   dependencies:
     tslib "^1.9.3"
 
+"@material/drawer@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@material/drawer/-/drawer-3.2.0.tgz#e810c182be7bedaf92c35586df9fb18eb0316057"
+  integrity sha512-bhcnosiJfHRYy4oeMspE/HY2+Wt7HDtsyk47Tc4h14cc8ZgcKd0C96wuL7GJDrZX/zLPnxboQOg+ctXIpskO4w==
+  dependencies:
+    "@material/animation" "^3.1.0"
+    "@material/base" "^3.1.0"
+    "@material/elevation" "^3.1.0"
+    "@material/feature-targeting" "^3.1.0"
+    "@material/list" "^3.2.0"
+    "@material/ripple" "^3.2.0"
+    "@material/rtl" "^3.2.0"
+    "@material/shape" "^3.1.0"
+    "@material/theme" "^3.1.0"
+    "@material/typography" "^3.1.0"
+    focus-trap "^5.0.0"
+    tslib "^1.9.3"
+
 "@material/elevation@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@material/elevation/-/elevation-3.1.0.tgz#2fcbde47653cc115519a39acc2d04b34e4cff12b"
@@ -256,6 +274,14 @@
   integrity sha512-/zgWSJRvzmvx9Yo4KjmiiMdicHFiGfCH8rriEec6VL/BMv95DnzF9GW7WA1nDHlJ66KRYxN3Fc9TqC6idbLdIw==
   dependencies:
     svelte "^3.0"
+
+"@smui/drawer@^1.0.0-beta.20":
+  version "1.0.0-beta.20"
+  resolved "https://registry.yarnpkg.com/@smui/drawer/-/drawer-1.0.0-beta.20.tgz#30caf8c39d76ad2ca06cccbcf47c227f3ab3c0c9"
+  integrity sha512-goXpGhYenEB1Wlqiaw6jRh3Ij8798RqQvWvCnzcSLBvtFq4N+L/c+yznet1nRwXGKxSov23GIyZIPK94h8q42g==
+  dependencies:
+    "@material/drawer" "^3.2.0"
+    "@smui/common" "^1.0.0-beta.20"
 
 "@smui/floating-label@^1.0.0-beta.20":
   version "1.0.0-beta.20"
@@ -1567,6 +1593,14 @@ find-up@^1.0.0:
   dependencies:
     path-exists "^2.0.0"
     pinkie-promise "^2.0.0"
+
+focus-trap@^5.0.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/focus-trap/-/focus-trap-5.1.0.tgz#64a0bfabd95c382103397dbc96bfef3a3cf8e5ad"
+  integrity sha512-CkB/nrO55069QAUjWFBpX6oc+9V90Qhgpe6fBWApzruMq5gnlh90Oo7iSSDK7pKiV5ugG6OY2AXM5mxcmL3lwQ==
+  dependencies:
+    tabbable "^4.0.0"
+    xtend "^4.0.1"
 
 follow-redirects@1.5.10:
   version "1.5.10"
@@ -4385,6 +4419,11 @@ svgo@^1.0.0:
     unquote "~1.1.1"
     util.promisify "~1.0.0"
 
+tabbable@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/tabbable/-/tabbable-4.0.0.tgz#5bff1d1135df1482cf0f0206434f15eadbeb9261"
+  integrity sha512-H1XoH1URcBOa/rZZWxLxHCtOdVUEev+9vo5YdYhC9tCY4wnybX+VQrCYuy9ubkg69fCBxCONJOSLGfw0DWMffQ==
+
 tape@^4.7.0:
   version "4.11.0"
   resolved "https://registry.yarnpkg.com/tape/-/tape-4.11.0.tgz#63d41accd95e45a23a874473051c57fdbc58edc1"
@@ -4755,6 +4794,11 @@ xdg-basedir@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/xdg-basedir/-/xdg-basedir-3.0.0.tgz#496b2cc109eca8dbacfe2dc72b603c17c5870ad4"
   integrity sha1-SWsswQnsqNus/i3HK2A8F8WHCtQ=
+
+xtend@^4.0.1:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
+  integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
 
 y18n@^3.2.1:
   version "3.2.1"
