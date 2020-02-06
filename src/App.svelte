@@ -7,10 +7,13 @@
 	import List, {Item, Text, Graphic, Separator, Subheader} from '@smui/list';
 	import H6 from '@smui/common/H6.svelte';
 	
+	import { onMount } from 'svelte';
 	import { categories, currentPath } from './stores';
 
 	import Box from './components/Box';
-	import CategorieResult from './components/CategorieResult';
+	import { ButtonList } from './components/Lists';
+	import { doSearch } from './components/SearchResult/search';
+	import { fetchMarvelCategories, marvelApiPath } from './utils';
 	import { SearchResultFirstLevel, SearchResultSecondLevel } from './components/SearchResult';
 
 	export let appName;
@@ -20,7 +23,7 @@
 
 	// drawer
 	let myDrawer;
-	let myDrawerOpen = false;
+	let myDrawerOpen = true;
 	let active = 'Gray Kittens';
 
 	function setActive(value) {
@@ -28,6 +31,20 @@
 		myDrawerOpen = false;
 	}
 
+	onMount(async () => {
+		const payload = await fetchMarvelCategories();
+		const data = payload.apis.reduce((acc, item) => {
+			// set path and label
+			const path = item.path.replace(marvelApiPath, '');
+			const label = path.split('/')[0];
+			// dedupe and add to accumulator
+			if (label && acc.every(_item => _item.label.indexOf(label) < 0)) {
+				acc.push({ ...item, path, label });
+			}
+			return acc;
+		}, []);
+		categories.set(data);
+	});
 
 </script>
 	
@@ -81,44 +98,39 @@
 
 <section class="drawer-container">
 	<Drawer variant="dismissible" bind:this={myDrawer} bind:open={myDrawerOpen}>
-	<Header>
-		<Title>Super Drawer</Title>
-		<Subtitle>It's the best drawer.</Subtitle>
-	</Header>
-	<Content>
-		<List>
-		<Item href="javascript:void(0)" on:click={() => setActive('Gray Kittens')} activated={active === 'Gray Kittens'}>
-			<Text>Gray Kittens</Text>
-		</Item>
-		<Item href="javascript:void(0)" on:click={() => setActive('A Space Rocket')} activated={active === 'A Space Rocket'}>
-			<Text>A Space Rocket</Text>
-		</Item>
-		<Item href="javascript:void(0)" on:click={() => setActive('100 Pounds of Gravel')} activated={active === '100 Pounds of Gravel'}>
-			<Text>100 Pounds of Gravel</Text>
-		</Item>
-		<Item href="javascript:void(0)" on:click={() => setActive('All of the Shrimp')} activated={active === 'All of the Shrimp'}>
-			<Text>All of the Shrimp</Text>
-		</Item>
-		<Item href="javascript:void(0)" on:click={() => setActive('A Planet with a Mall')} activated={active === 'A Planet with a Mall'}>
-			<Text>A Planet with a Mall</Text>
-		</Item>
-		</List>
-	</Content>
+		<Header>
+			<Title>Categories</Title>
+			<Subtitle>All searchable categories</Subtitle>
+		</Header>
+		<Content>
+			<!-- <List>
+			<Item href="javascript:void(0)" on:click={() => setActive('Gray Kittens')} activated={active === 'Gray Kittens'}>
+				<Text>Gray Kittens</Text>
+			</Item>
+			<Item href="javascript:void(0)" on:click={() => setActive('A Space Rocket')} activated={active === 'A Space Rocket'}>
+				<Text>A Space Rocket</Text>
+			</Item>
+			<Item href="javascript:void(0)" on:click={() => setActive('100 Pounds of Gravel')} activated={active === '100 Pounds of Gravel'}>
+				<Text>100 Pounds of Gravel</Text>
+			</Item>
+			<Item href="javascript:void(0)" on:click={() => setActive('All of the Shrimp')} activated={active === 'All of the Shrimp'}>
+				<Text>All of the Shrimp</Text>
+			</Item>
+			<Item href="javascript:void(0)" on:click={() => setActive('A Planet with a Mall')} activated={active === 'A Planet with a Mall'}>
+				<Text>A Planet with a Mall</Text>
+			</Item>
+			</List> -->
+			<ButtonList data={$categories} onSubmit={doSearch} />
+		</Content>
 	</Drawer>
 
 	<AppContent class="app-content">
-	<main class="main-content">
-		<Button on:click={() => myDrawerOpen = !myDrawerOpen}><Label>Toggle Drawer</Label></Button>
-		<br />
-		<pre class="status">Active: {active}</pre>
-	</main>
+		<main class="main-content">
+			<Button on:click={() => myDrawerOpen = !myDrawerOpen}><Label>Toggle Drawer</Label></Button>
+			<!-- <br /> -->
+			<!-- <pre class="status">Active: {active}</pre> -->
+			<SearchResultFirstLevel />
+			<SearchResultSecondLevel />
+		</main>
 	</AppContent>
-</section>
-
-<section class="main">
-	<CategorieResult />
-	<div class="search-result">
-		<SearchResultFirstLevel />
-		<SearchResultSecondLevel />
-	</div>
 </section>
